@@ -8,7 +8,7 @@
     "applications": {
         "fastapi": {
             "type": "python 3.9",
-            "path": "/home/fastapi",
+            "path": "/home/msc-fastapi",
             "home": "/usr/local",
             "module": "main",
             "callable": "app"
