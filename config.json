@@ -10,7 +10,7 @@
             "type": "python 3.9",
             "path": "/home/fastapi",
             "home": "/usr/local",
-            "module": "asgi",
+            "module": "main",
             "callable": "app"
         }
     }
