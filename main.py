@@ -11,8 +11,8 @@ import platform
 environment = 'test'
 
 class Prod(BaseModel):
-    name: str
-    manufacturer: str
+    prod_txt: str
+    prod_manu_txt: str
 
 @app.get("/")
 def read_root():
