@@ -6,7 +6,7 @@ app = FastAPI()
 
 import os
 import configparser
-from teradata.teradata_mms import Teradata
+from databases.teradata_mms import Teradata
 import platform
 environment = 'test'
 
@@ -38,7 +38,7 @@ def init_vars(environment):
     ### SETTING GLOBAL VARIABLES
     ##############################################
     ### INPUT variables from config.ini - this can be found in the config folder
-    configFolder        = 'teradata/config/'        #here lie the config file
+    configFolder        = 'databases/config/'        #here lie the config file
     curr_directory      = os.path.dirname(os.path.abspath(__file__))
 
     config              = configparser.ConfigParser()
