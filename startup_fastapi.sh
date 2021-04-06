@@ -28,3 +28,14 @@ groupadd docker
 #build fastapi app
 #docker build -t nginx-unit-fastapi .
 #docker run -p 80:80 nginx-unit-fastapi
+
+
+create daemon.json
+ /etc/docker/daemon.json  --> and then restart daemon
+{
+  "bip": "10.15.0.1/24",
+  "default-address-pools": [
+    {"base": "10.20.0.0/16", "size": 24},
+    {"base": "10.40.0.0/16", "size": 24}
+  ]
+}

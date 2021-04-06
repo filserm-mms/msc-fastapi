@@ -12,7 +12,7 @@ from databases.teradata_mms import Teradata
 import platform
 
 
-environment = 'test'
+environment = 'prod'
 
 class Article(BaseModel):
     prod_id: int
