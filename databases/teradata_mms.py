@@ -1,16 +1,36 @@
 # @Author: Michael Filser, Lukas Gruber
 # @Date:   25-09-2020
-# @Last modified time: 2021-03-01 15:14:30
+# @Last modified time: 2021-04-07 08:55:52 
 
-from google.cloud.bigquery.job import query
 from teradatasql import *
 
 class Teradata():
 
-    def __init__(self, host, user, password=None, password_path=None, password_files=None, encrypted='n'):
+    def __init__(self, host, user='', password=None, password_path=None, password_files=None, encrypted='n', gcp_project_id='', gcp_secret_password=''):
         self.host     = host
         self.user     = user
-        self.password = f'ENCRYPTED_PASSWORD(file:{password_path}{password_files[0]},file:{password_path}{password_files[1]})' if encrypted == 'y' else password
+        self.password = f'ENCRYPTED_PASSWORD(file:{password_path}{password_files[0]},file:{password_path}{password_files[1]})' if encrypted == 'y' else password  
+        
+        #get data from google secret manager if gcp_secret_password is provided at initialization
+        if gcp_secret_password != '':
+            from google.cloud import secretmanager   #pip install google-cloud-secret-manager
+
+            #only needed if connection should not be done with the default google service account
+            #from google.oauth2 import service_account
+            #import os
+            #key_path = os.environ['GOOGLE_APPLICATION_CREDENTIALS'] #this needs to be set in the os environment variables
+            #credentials = service_account.Credentials.from_service_account_file(
+            #                                key_path, scopes=["https://www.googleapis.com/auth/cloud-platform"],
+            #            )
+            #client = secretmanager.SecretManagerServiceClient(credentials=credentials)
+            client = secretmanager.SecretManagerServiceClient()
+            project_id      = gcp_project_id
+            
+            version_id      = 1   #if we use more versions in the future this needs to be adapted
+            password        = f"projects/{project_id}/secrets/{gcp_secret_password}/versions/{version_id}"
+            pwd_response    = client.access_secret_version(request={"name": password})
+            self.password   = pwd_response.payload.data.decode("UTF-8")
+             
         self.con = self.get_connection()
 
     def get_connection(self):
@@ -65,6 +85,29 @@ class Teradata():
                 else:
                     return 0 if numrows is None else numrows
 
+    def call_sp(self, procedure_name, params=[]):
+        sParams=''
+        with self.con.cursor() as cur:
+            try:
+                while params:
+                    parameter = params.pop(0)
+                    if type(parameter) == str:
+                        if parameter.endswith("?"):
+                            sParams = sParams + parameter + ','
+                        else:
+                            sParams = sParams + "'" + parameter + "',"
+                    else:
+                        sParams = sParams + str(parameter) + ","
+
+                sParams = sParams[:-1] #get rid of last comma
+                stmt = f"{{call {procedure_name} ({sParams})}}"
+                cur.execute(stmt)                
+                resultset = list(cur.fetchall())
+            except Exception as error:
+                raise Exception({error})
+            else:
+                return resultset
+
     def load_csv(self, filename, delimiter, column_cnt, tablename=''):
         import csv
         columns = column_cnt * '?,'
@@ -97,21 +140,38 @@ class Teradata():
         except Exception as error:
             raise Exception({error})
 
+
     def __del__(self):
         self.con.close()
 
 if __name__ == '__main__':
     #connecting with encrypted password by providing encrypted password files
     #providing first the password key file, then the encrypted password file
-    con = Teradata(host='dwh4test', user='filser', password_path='E:/warp/dwh2db/python/', password_files=['Filser_DWHFLASH_PassKey.properties', 'Filser_DWHFLASH_EncPass.properties'], encrypted='y')
+    #con = Teradata(host='dwh4test', user='filser', password_path='E:/warp/dwh2db/python/', password_files=['Filser_DWHFLASH_PassKey.properties', 'Filser_DWHFLASH_EncPass.properties'], encrypted='y')
+    con = Teradata(host='dwh4test', user='pp_user', gcp_project_id = 'mms-msc-msc-d-fx5e', gcp_secret_password='td_dwh4test_pp_user_pwd')
     print (con)
+    exit()
+
+    # #call stored procedure
+    # program_id = 13
+    # program_txt = 'python re-design'
+    # app_name = 'test'
+    # action_type_txt = "start"
+    # action_source_name = "wasweißich"
+    # action_target_name = "weißichauchned"
+    # out_sp = con.call_sp(procedure_name="acclog.SP_PP_LOGGING", params=[program_id, program_txt, app_name, action_type_txt, action_source_name, action_target_name, '?', '?'])
+    # for row in out_sp:
+    #     o_statuscode = row[0]
+    #     o_action_start_ts = row[1]
+    # print (f'statuscode = {o_statuscode} - action_start_ts = {o_action_start_ts}')
 
     #read from bigquery and load via csv
     from bigquery_mms import BigQuery
     bq_con = BigQuery()
     stmt = "SELECT * FROM `mms-msc-msc-d-fx5e.msc_test.outlet`"
     df = bq_con.query(stmt, fmt='pd')
-    #print (df.head(2))
+    print (df.head(2))
+    exit()
 
     # export to csv
     filename = 'd:/temp/demo1.csv'
