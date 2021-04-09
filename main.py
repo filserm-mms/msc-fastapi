@@ -129,7 +129,7 @@ def init_vars(environment):
 
 def connect_to_db():
     global con, teradata_mms
-    con = Teradata(host=host, user=td_user, password_path=path, password_files=td_pass, encrypted='y')
+    con = Teradata(host=host, user=td_user, gcp_project_id = 'mms-msc-msc-d-fx5e', gcp_secret_password='td_dwh4test_pp_user_pwd')
      
 
 init_vars(environment)
