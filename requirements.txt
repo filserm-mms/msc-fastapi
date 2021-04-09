@@ -2,3 +2,4 @@ fastapi==0.63.0
 uvicorn
 teradatasql
 google-cloud-bigquery
+google-cloud-secret-manager
