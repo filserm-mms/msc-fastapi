@@ -3,3 +3,4 @@ uvicorn
 teradatasql
 google-cloud-bigquery
 google-cloud-secret-manager
+python-multipart

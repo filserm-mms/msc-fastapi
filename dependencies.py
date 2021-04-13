@@ -1,19 +1,3 @@
-from fastapi.security.api_key import APIKeyQuery, APIKeyHeader
-from fastapi import HTTPException, Security
+from fastapi.security import OAuth2PasswordBearer
 
-import os
-
-API_KEY = os.getenv('API_KEY', "1234asdf")
-API_KEY_NAME = os.getenv('API_KEY_NAME', "access_token")
-
-api_key_query = APIKeyQuery(name=API_KEY_NAME, auto_error=False)
-api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
-
-async def get_api_key(api_key_query: str = Security(api_key_query), api_key_header: str = Security(api_key_header),):
-
-    if api_key_query == API_KEY:
-        return api_key_query
-    elif api_key_header == API_KEY:
-        return api_key_header
-    else:
-        raise HTTPException(status_code=403, detail="Could not validate credentials")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
