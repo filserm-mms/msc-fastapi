@@ -1,17 +1,17 @@
-from fastapi import APIRouter, Security
+from fastapi import APIRouter, Depends
 from fastapi.param_functions import Path
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 from pydantic import BaseModel
 
-from dependencies import oauth2_scheme
+from dependencies import verify_token
 from .db_connection import con
 
 router = APIRouter(
     prefix="/articles",
     tags=["articles"],
-    dependencies=[Security(oauth2_scheme)]
+    dependencies=[Depends(verify_token)]
 )
 
 class Article(BaseModel):
