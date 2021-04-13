@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Security
 from fastapi.param_functions import Path, Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
@@ -11,7 +11,7 @@ from .db_connection import con
 router = APIRouter(
     prefix="/articles",
     tags=["articles"],
-    dependencies=[Depends(get_api_key)]
+    dependencies=[Security(get_api_key)]
 )
 
 class Article(BaseModel):

@@ -1,4 +1,4 @@
-import os, sys, platform
+import os, platform
 import configparser
 from databases.teradata_mms import Teradata
 
@@ -29,10 +29,11 @@ def init_vars(environment):
     td_pass[1]           = td_pass[1].lstrip()  #remove spaces
 
 def connect_to_db():
-    if sys.platform == "win32":
-        con = Teradata(host=host, user=td_user, password_path=path, password_files=td_pass, encrypted='y')
-    else:
+    if platform.system() == "Linux":
         con = Teradata(host=host, user=td_user, gcp_project_id = 'mms-msc-msc-d-fx5e', gcp_secret_password='td_dwh4test_pp_user_pwd')
+    else:
+        con = Teradata(host=host, user=td_user, password_path=path, password_files=td_pass, encrypted='y')
+
     return con
 
 environment = "test"
