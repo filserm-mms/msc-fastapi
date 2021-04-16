@@ -3,37 +3,15 @@ from fastapi.param_functions import Path
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from pydantic import BaseModel
-
 from dependencies import verify_token
 from .db_connection import con
+from .models import Article
 
 router = APIRouter(
     prefix="/articles",
     tags=["test"],
     dependencies=[Depends(verify_token)]
 )
-
-class Article(BaseModel):
-    prod_id: int
-    country_d: str
-    prod_txt: str
-    manu_id: int
-    sub_category: int
-    ean: str
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "prod_id":      2490314,
-                "country_d":    "DE",
-                "prod_txt":     "9407577 PS4 500GB BLACK",
-                "manu_id":      490000157,
-                "sub_category": 3204,
-                "ean":          "0711719407577",
-            }
-        }
-
 
 @router.get("/prod_id/{prod_id}", response_model=Article, summary="get a single article")
 def get_prod_id(prod_id: int = Path(...)):

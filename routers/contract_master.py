@@ -3,77 +3,17 @@ from fastapi.param_functions import Path, Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from pydantic import BaseModel
-from typing import List
-from datetime import date, datetime
+from datetime import date
 
 from dependencies import verify_token
 from .db_connection import con
+from .models import ManufacturerList, SupplierList
 
 router = APIRouter(
     prefix="/contractMaster",
     tags=["contractMaster"],
     dependencies=[Depends(verify_token)]
 )
-
-class Manufacturer(BaseModel):
-    manu_id:        int
-    manu_txt:       str
-    prod_root_id:   str
-    update_time:    datetime
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "manu_id":      490006149,
-                "manu_txt":     "CARSON",
-                "prod_root_id": "DE  ",
-                "update_time":  "2021-03-09T09:47:28.301000"
-            }
-        }
-
-class ManufacturerList(BaseModel):
-    date: List[Manufacturer]
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "2021-03-09": [
-                        Manufacturer.Config.schema_extra["example"]
-                ]
-            }
-        }
-
-
-class Supplier(BaseModel):
-    sap_kreditor_no:    int
-    supp_txt:           str
-    prod_root_id:       str
-    update_time:        datetime
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "sap_kreditor_no":  823637,
-                "supp_txt":         "MICHAEL HUBER/FABIAN FRISCHMANN - GBR DICHT & ERGREIFEND",
-                "prod_root_id":     "DE  ",
-                "update_time":      "2021-04-15T09:14:45.454000"
-            }
-        }
-
-
-class SupplierList(BaseModel):
-    date: List[Supplier]
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "2021-04-15": [
-                    Supplier.Config.schema_extra["example"]
-                ]
-            }
-        }
-
 
 @router.get("/manu/{date}", response_model=ManufacturerList, summary="get manufacturers by date")
 def get_manufacturers(date: date = Path(None)):
