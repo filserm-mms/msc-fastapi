@@ -10,7 +10,7 @@ from .db_connection import con
 
 router = APIRouter(
     prefix="/articles",
-    tags=["articles"],
+    tags=["test"],
     dependencies=[Depends(verify_token)]
 )
 

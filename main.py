@@ -2,17 +2,19 @@ from fastapi import FastAPI, Depends
 from fastapi.exceptions import HTTPException
 from fastapi.openapi.utils import get_openapi
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
-from routers import articles
+from routers import articles, contract_master
+
+""" # yaml
+from fastapi.responses import Response
+import yaml, io, functools """
 
 app = FastAPI()
 
-app.include_router(articles.router)
-
-@app.get("/")
+@app.get("/", tags=["general"])
 def read_root():
     return {"key": "value"}
 
-@app.post("/token")
+@app.post("/token", tags=["general"])
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     if form_data.username == "msc" and form_data.password == "123":
         return {"access_token": "1234asdf", "token_type": "bearer"}
@@ -25,11 +27,25 @@ def custom_openapi():
         return app.openapi_schema
     openapi_schema = get_openapi(
         title="MSC API",
-        version="0.0.0",
+        version="0.1.0",
         description="This is the API of Margin and Sellout Calculation!",
         routes=app.routes,
     )
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
+""" # additional yaml version of openapi.json
+@app.get('/openapi.yaml', include_in_schema=False)
+@functools.lru_cache()
+def read_openapi_yaml() -> Response:
+    openapi_json= app.openapi()
+    yaml_s = io.StringIO()
+    yaml.dump(openapi_json, yaml_s)
+    return Response(yaml_s.getvalue(), media_type='text/yaml')
+
+ """
 app.openapi = custom_openapi
+
+# include routers
+app.include_router(contract_master.router)
+app.include_router(articles.router)
