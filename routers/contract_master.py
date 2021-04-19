@@ -7,7 +7,7 @@ from datetime import date
 
 from dependencies import verify_token
 from .db_connection import con
-from .models import ManufacturerList, SupplierList
+from .models import Manufacturer, Supplier
 
 router = APIRouter(
     prefix="/contractMaster",
@@ -15,7 +15,7 @@ router = APIRouter(
     dependencies=[Depends(verify_token)]
 )
 
-@router.get("/manu/{date}", response_model=ManufacturerList, summary="get manufacturers by date")
+@router.get("/manu/{date}", response_model=Manufacturer, summary="get manufacturers by date")
 def get_manufacturers(date: date = Path(None)):
     '''
     **{date}** has to be in the format of **"YYYY-MM-DD"**
@@ -26,7 +26,7 @@ def get_manufacturers(date: date = Path(None)):
     json_compatible_item_data = jsonable_encoder(result)
     return JSONResponse(content=json_compatible_item_data)
 
-@router.get("/supplier/{date}", response_model=SupplierList, summary="get suppliers by date")
+@router.get("/supplier/{date}", response_model=Supplier, summary="get suppliers by date")
 def get_suppliers(date: date = Path(None)):
     '''
     **{date}** has to be in the format of **"YYYY-MM-DD"**
@@ -65,9 +65,12 @@ def get_manu_data(date):
 
     resultset = con.query(sql=sql, params=[date], columndescriptor=1) # needs formatting
 
-    result = order_by_date(resultset)
+    for row in resultset:
+        row["prod_root_id"] = row["prod_root_id"].strip()
 
-    return result
+    #result = order_by_date(resultset)
+
+    return resultset
 
 def get_sup_data(date):
     sql = '''
@@ -99,9 +102,12 @@ def get_sup_data(date):
 
     resultset = con.query(sql=sql, params=[date], columndescriptor=1) # needs formatting
 
-    result = order_by_date(resultset)
+    for row in resultset:
+        row["prod_root_id"] = row["prod_root_id"].strip()
 
-    return result
+    #result = order_by_date(resultset)
+
+    return resultset
 
 def order_by_date(rs):
     result = {}

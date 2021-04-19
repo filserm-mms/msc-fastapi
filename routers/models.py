@@ -39,7 +39,7 @@ class Manufacturer(BaseModel):
             }
         }
 
-class ManufacturerList(BaseModel):
+""" class ManufacturerList(BaseModel):
     date: List[Manufacturer]
 
     class Config:
@@ -51,7 +51,7 @@ class ManufacturerList(BaseModel):
             }
         }
 
-
+ """
 class Supplier(BaseModel):
     sap_kreditor_no:    int
     supp_txt:           str
@@ -68,7 +68,7 @@ class Supplier(BaseModel):
             }
         }
 
-
+""" 
 class SupplierList(BaseModel):
     date: List[Supplier]
 
@@ -80,3 +80,4 @@ class SupplierList(BaseModel):
                 ]
             }
         }
+ """
