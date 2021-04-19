@@ -16,8 +16,8 @@ def read_root():
 
 @app.post("/token", tags=["general"])
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    if form_data.username == "msc" and form_data.password == "123":
-        return {"access_token": "1234asdf", "token_type": "bearer"}
+    if form_data.username == "msc" and form_data.password == "E=<6+:jGPrg_SYT~":
+        return {"access_token": "cugAduTUUUJqrEFawrpdGhKz2Kf4bgD5", "token_type": "bearer"}
     else:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
 

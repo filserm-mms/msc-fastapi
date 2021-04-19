@@ -8,7 +8,7 @@ sudo apt-get install -y \
     curl \
     gnupg \
     lsb-release \
-        software-properties-common
+    software-properties-common
 
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
@@ -27,7 +27,8 @@ groupadd docker
 
 #build fastapi app
 #docker build -t nginx-unit-fastapi .
-#docker run -p 80:80 nginx-unit-fastapi
+#docker create -p 80:80 --add-host dwh4test:172.17.133.71 --name fastapi nginx-unit-fastapi
+#docker start fastapi
 
 
 create daemon.json
