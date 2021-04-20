@@ -14,28 +14,31 @@ def init_vars(environment):
     config.read(f'{curr_directory}/{configFolder}/config.ini')
 
     global emailserver, sender, email_to, email_bcc, log_age, path   #these are set only once and should be available in the global scope
-    global host, td_user, td_pass
+    global host, td_user, td_pass, gcp_project_id, gcp_secret_password
 
-    config_linux = config['LINUX']
-    config_general       = config['GENERAL']
-    log_age              = int(config_general['log_age'])
+    config_linux    = config['LINUX']
+    config_general  = config['GENERAL']
+    log_age         = int(config_general['log_age'])
 
-    config               = config[environment.upper()]
-    path  = config_linux['path_to_tdconnection'] if platform.system() == "Linux" else config['path_to_tdconnection']
-    host                 = config['host']
-    td_user              = config['td_user']
-    td_pass              = config['td_pass']
-    td_pass              = td_pass.split(',')   #if 2 password files were given
-    td_pass[1]           = td_pass[1].lstrip()  #remove spaces
+    config          = config[environment.upper()]
+    path            = config_linux['path_to_tdconnection'] if platform.system() == "Linux" else config['path_to_tdconnection']
+    host            = config['host']
+    td_user         = config['td_user']
+    td_pass         = config['td_pass']
+    td_pass         = td_pass.split(',')   #if 2 password files were given
+    td_pass[1]      = td_pass[1].lstrip()  #remove spaces
+
+    gcp_secret_password =   config['gcp_secret_password']
+    gcp_project_id =        config['gcp_project_id']
 
 def connect_to_db():
     if platform.system() == "Linux":
-        con = Teradata(host=host, user=td_user, gcp_project_id = 'mms-msc-msc-d-fx5e', gcp_secret_password='td_dwh4test_pp_user_pwd')
+        con = Teradata(host=host, user=td_user, gcp_project_id = gcp_project_id, gcp_secret_password=gcp_secret_password)
     else:
         con = Teradata(host=host, user=td_user, password_path=path, password_files=td_pass, encrypted='y')
 
     return con
 
-environment = "test"
+environment = os.getenv("DB_ENV", "test")
 init_vars(environment)
 con = connect_to_db()
