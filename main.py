@@ -1,21 +1,24 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, APIRouter
 from fastapi.exceptions import HTTPException
 from fastapi.openapi.utils import get_openapi
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from routers import articles, contract_master
 from dependencies import API_TOKEN
+from routers import contract_master, articles 
 
 """ # yaml
 from fastapi.responses import Response
 import yaml, io, functools """
 
-app = FastAPI()
+app = FastAPI(docs_url='/api/docs',openapi_url="/api/openapi.json")
+app.include_router(contract_master.router,prefix="/api")
+app.include_router(articles.router,prefix="/api")
 
-@app.get("/", tags=["general"])
+@app.get("/api", tags=["general"])
 def read_root():
     return {"key": "value"}
 
-@app.post("/token", tags=["general"])
+@app.post("/api/token", tags=["general"])
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     if form_data.username == "msc" and form_data.password == "E=<6+:jGPrg_SYT~":
         return {"access_token": API_TOKEN, "token_type": "bearer"}
@@ -46,7 +49,3 @@ def read_openapi_yaml() -> Response:
 
  """
 app.openapi = custom_openapi
-
-# include routers
-app.include_router(contract_master.router)
-app.include_router(articles.router)
