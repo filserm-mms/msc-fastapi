@@ -42,9 +42,9 @@ def get_manu_data(date):
 
     sql = '''
     select  
-        mm.id_ + 490000000,
-        mm.name_,
-        s.subsid_txt2,
+        mm.id_ + 490000000 as manu_id,
+        mm.name_ as manu_txt,
+        s.subsid_txt2 as prod_root_id,
         mm.update_time
     from
         masterdata.manu mm
@@ -70,9 +70,9 @@ def get_manu_data(date):
 def get_sup_data(date):
     sql = '''
     select
-        ssd.id_,
-        ssd.full_name,
-        s.subsid_txt2,
+        ssd.id_ as sap_kreditor_no,
+        ssd.full_name as supp_txt,
+        s.subsid_txt2 as prod_root_id,
         ssd.update_time
     from
         masterdata.suppl_subsid_data ssd
@@ -81,9 +81,6 @@ def get_sup_data(date):
             on s.oid = ssd.clientele_oid 
            and s.subsid_txt2 = 'DE'
            and cast(ssd.update_time as date) >= ?
-    
-    inner join masterdata.suppl su
-            on su.oid = ssd.suppl_oid
              
     where (ssd.id_ >= 740000 and ssd.id_ < 888888)
       and ssd.full_name is not null
