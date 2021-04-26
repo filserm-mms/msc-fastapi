@@ -41,23 +41,18 @@ def get_manu_data(date):
     result = {}
 
     sql = '''
-    select
-        m.manu_id,
-        m.manu_txt,
-        m.prod_root_id,
+    select  
+        mm.id_ + 490000000,
+        mm.name_,
+        s.subsid_txt2,
         mm.update_time
     from
-        ep.v_manu m
-        
-    inner join masterdata.manu mm
-            on mm.id_ = trim (leading '0' from (substring (cast (m.manu_id as char(10)) from 3 for 15)))
+        masterdata.manu mm
 
     inner join masterdata.subsid s
             on s.oid = mm.clientele_oid 
         and s.subsid_txt2 = 'DE'
         and cast(mm.update_time as date) >= ?
-
-    where m.prod_root_id = 'DE'
 
     order by
     mm.update_time desc;
@@ -75,26 +70,22 @@ def get_manu_data(date):
 def get_sup_data(date):
     sql = '''
     select
-    su.sap_kreditor_no,
-        su.supp_txt,
-        su.prod_root_id,
+        ssd.id_,
+        ssd.full_name,
+        s.subsid_txt2,
         ssd.update_time
     from
-        v_supp su
-    
-    inner join masterdata.suppl_subsid_data ssd
-            on ssd.id_ = su.sap_kreditor_no
-            and cast(ssd.update_time as date) >= ?
-    
+        masterdata.suppl_subsid_data ssd
+       
     inner join masterdata.subsid s
             on s.oid = ssd.clientele_oid 
-        and s.subsid_txt2 = 'DE'
-            
-    where su.prod_root_id = 'DE'
-    and su.supp_typ_id = 0
-    and (su.sap_kreditor_no >= 740000 and su.sap_kreditor_no < 888888)
-    and coalesce (regexp_substr (translate (su.supp_id using latin_to_unicode with error), '[A-Z]',1,1), '0') = '0' 
-    and su.supp_id not in ('49100518', '49747700', '49100339', '49805041' ,'49375')
+           and s.subsid_txt2 = 'DE'
+           and cast(ssd.update_time as date) >= ?
+    
+    inner join masterdata.suppl su
+            on su.oid = ssd.suppl_oid
+             
+    where (ssd.id_ >= 740000 and ssd.id_ < 888888)
 
     order by
     ssd.update_time desc;
