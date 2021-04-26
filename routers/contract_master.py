@@ -86,6 +86,7 @@ def get_sup_data(date):
             on su.oid = ssd.suppl_oid
              
     where (ssd.id_ >= 740000 and ssd.id_ < 888888)
+      and ssd.full_name is not null
 
     order by
     ssd.update_time desc;
