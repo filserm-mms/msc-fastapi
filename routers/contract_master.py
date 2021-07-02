@@ -7,7 +7,7 @@ from datetime import date
 
 from dependencies import verify_token
 from .db_connection import con
-from .models import Manufacturer, Supplier
+from .models import Manufacturer, Supplier, InternalProduct
 
 router = APIRouter(
     prefix="/contractMaster",
@@ -34,6 +34,17 @@ def get_suppliers(date: date = Path(None)):
     Returns all manufacturers which have been updated since {date}.
     '''
     result = get_sup_data(date)
+    json_compatible_item_data = jsonable_encoder(result)
+    return JSONResponse(content=json_compatible_item_data)
+
+@router.get("/internalProducts", response_model=InternalProduct, summary="get internal products")
+def get_internalProducts():
+    '''
+    Returns internal products.
+
+    **Can't be tested in Swagger UI, because the response body is too large!**
+    '''
+    result = get_internalProducts_data()
     json_compatible_item_data = jsonable_encoder(result)
     return JSONResponse(content=json_compatible_item_data)
 
@@ -95,6 +106,29 @@ def get_sup_data(date):
         row["prod_root_id"] = row["prod_root_id"].strip()
 
     #result = order_by_date(resultset)
+
+    return resultset
+
+def get_internalProducts_data():
+    sql = '''
+    select
+        prod_org_id as id,
+        prod_root_id as country,
+        prod_txt as "name",
+        prod_manu_txt as manufacturer,
+        prod_grp_id as sub_category,
+        upc_code_max as ean
+    from ep.prod_all 
+    where substring (cast (upc_code_max as char (13)) from 1 for 5) = '20000'
+        and prod_root_id = 'DE'
+    order by prod_org_id;
+    '''
+    
+    resultset = con.query(sql=sql, columndescriptor=1)
+
+    for row in resultset:
+        row["country"] = row["country"].strip()
+        row["ean"] = row["ean"].strip()
 
     return resultset
 

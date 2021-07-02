@@ -68,6 +68,26 @@ class Supplier(BaseModel):
             }
         }
 
+class InternalProduct(BaseModel):
+    id:             int
+    country:        str
+    name:           str
+    manufacturer:   str
+    sub_category:    int
+    ean:            str
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "id": 1290300,
+                "country": "DE",
+                "name": "E+ MEIN BASE MIT HANDY 5 /GP 2010",
+                "manufacturer": "MOBILCOM-DEBITE",
+                "sub_category": 509,
+                "ean": "2000012903007"
+            }
+        }
+
 """ 
 class SupplierList(BaseModel):
     date: List[Supplier]

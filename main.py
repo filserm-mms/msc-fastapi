@@ -3,8 +3,8 @@ from fastapi.exceptions import HTTPException
 from fastapi.openapi.utils import get_openapi
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from routers import articles, contract_master
-from dependencies import API_TOKEN
 from routers import contract_master, articles 
+from config import config
 
 """ # yaml
 from fastapi.responses import Response
@@ -20,8 +20,8 @@ def read_root():
 
 @app.post("/api/token", tags=["general"])
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    if form_data.username == "msc" and form_data.password == "E=<6+:jGPrg_SYT~":
-        return {"access_token": API_TOKEN, "token_type": "bearer"}
+    if form_data.username == "msc" and form_data.password == config.PASSWORD:
+        return {"access_token": config.API_TOKEN, "token_type": "bearer"}
     else:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
 
