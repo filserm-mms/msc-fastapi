@@ -93,7 +93,7 @@ def get_sup_data(date):
            and s.subsid_txt2 = 'DE'
            and cast(ssd.update_time as date) >= ?
              
-    where (ssd.id_ >= 740000 and ssd.id_ < 888888)
+    where ((ssd.id_ >= 740000 and ssd.id_ < 888888) or (ssd.id_ in (79922010,79922850)))
       and ssd.full_name is not null
 
     order by
