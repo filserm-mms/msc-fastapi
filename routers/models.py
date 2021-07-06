@@ -72,7 +72,7 @@ class InternalProduct(BaseModel):
     id:             int
     country:        str
     name:           str
-    manufacturer:   str
+    manufacturer:   int
     sub_category:    int
     ean:            str
 
@@ -82,7 +82,7 @@ class InternalProduct(BaseModel):
                 "id": 1290300,
                 "country": "DE",
                 "name": "E+ MEIN BASE MIT HANDY 5 /GP 2010",
-                "manufacturer": "MOBILCOM-DEBITE",
+                "manufacturer": 893,
                 "sub_category": 509,
                 "ean": "2000012903007"
             }

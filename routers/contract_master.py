@@ -115,7 +115,7 @@ def get_internalProducts_data():
         prod_org_id as id,
         prod_root_id as country,
         prod_txt as "name",
-        prod_manu_txt as manufacturer,
+        manu_org_id as manufacturer,
         prod_grp_id as sub_category,
         upc_code_max as ean
     from ep.prod_all 
