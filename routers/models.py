@@ -3,12 +3,12 @@ from datetime import datetime
 from typing import List
 
 class Article(BaseModel):
-    prod_id: int
-    country_d: str
-    prod_txt: str
-    manu_id: int
-    sub_category: int
-    ean: str
+    prod_id:        int
+    country_d:      str
+    prod_txt:       str
+    manu_id:        int
+    sub_category:   int
+    ean:            str
 
     class Config:
         schema_extra = {
@@ -73,7 +73,7 @@ class InternalProduct(BaseModel):
     country:        str
     name:           str
     manufacturer:   int
-    sub_category:    int
+    sub_category:   int
     ean:            str
 
     class Config:
@@ -85,6 +85,26 @@ class InternalProduct(BaseModel):
                 "manufacturer": 893,
                 "sub_category": 509,
                 "ean": "2000012903007"
+            }
+        }
+
+class Sellout(BaseModel):
+    contract_id:    int
+    salesertrag:    float
+    resertrag:      float
+    salesval:       float
+    resval:         float
+    abgerechnet:    int
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "contract_id": 605599,
+                "salesertrag": 4660,
+                "resertrag": 590,
+                "salesval": 125510.8,
+                "resval": 16773.34,
+                "abgerechnet": 1
             }
         }
 
