@@ -144,11 +144,11 @@ def get_internalProducts_data():
 def get_selloutContract_data(contract_id):
     sql = '''
         select	
-            distinct co.contract_id, 
-            scf1.salesertrag, 
-            vcf1.resertrag, 
-            scf1.salesval, 
-            vcf1.resval,
+            distinct co.contract_id as GKM_Vertragsnummer, 
+            scf1.salesertrag as Summe_Abverkaeufe, 
+            vcf1.resertrag as Summe_Reservierungen, 
+            scf1.salesval as Ertrag_Abverkaeufe , 
+            vcf1.resval as Ertrag_Reservierungen,
             case 
                 when cfc.contract_id = co.contract_id then 1 
                 else 0 

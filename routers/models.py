@@ -89,21 +89,21 @@ class InternalProduct(BaseModel):
         }
 
 class Sellout(BaseModel):
-    contract_id:    int
-    salesertrag:    float
-    resertrag:      float
-    salesval:       float
-    resval:         float
-    abgerechnet:    int
+    gkm_vertragsnummer:     int
+    summe_abverkaeufe:      float
+    summe_reservierungen:   float
+    ertrag_abverkaeufe:     float
+    ertrag_reservierungen:  float
+    abgerechnet:            int
 
     class Config:
         schema_extra = {
             "example": {
-                "contract_id": 605599,
-                "salesertrag": 4660,
-                "resertrag": 590,
-                "salesval": 125510.8,
-                "resval": 16773.34,
+                "gkm_vertragsnummer": 605599,
+                "summe_abverkaeufe": 4660,
+                "summe_reservierungen": 590,
+                "ertrag_abverkaeufe": 125510.8,
+                "ertrag_reservierungen": 16773.34,
                 "abgerechnet": 1
             }
         }
