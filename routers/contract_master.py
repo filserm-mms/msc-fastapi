@@ -8,10 +8,11 @@ from datetime import date
 from dependencies import verify_token
 from .db_connection import con
 from .models import Manufacturer, Supplier, InternalProduct, Sellout
+from typing import Union
 
 router = APIRouter(
-    prefix="/contractMaster",
-    tags=["contractMaster"],
+    prefix="/contractmaster",
+    tags=["contractmaster"],
     dependencies=[Depends(verify_token)]
 )
 
@@ -37,7 +38,7 @@ def get_suppliers(date: date = Path(None)):
     json_compatible_item_data = jsonable_encoder(result)
     return JSONResponse(content=json_compatible_item_data)
 
-@router.get("/internalProducts", response_model=InternalProduct, summary="get internal products")
+@router.get("/internal-products", response_model=InternalProduct, summary="get internal products")
 def get_internalProducts():
     '''
     Returns internal products.
@@ -57,8 +58,7 @@ def get_selloutContract(contract_id: int = Path(None)):
     json_compatible_item_data = jsonable_encoder(result)
     return JSONResponse(content=json_compatible_item_data)
 
-def get_manu_data(date):
-    result = {}
+def get_manu_data(date)-> Union[dict, str]:
 
     sql = '''
     select  
@@ -78,14 +78,19 @@ def get_manu_data(date):
     mm.update_time desc;
     '''
 
-    resultset = con.query(sql=sql, params=[date], columndescriptor=1) # needs formatting
+    try:
+        resultset = con.query(sql=sql, params=[date], columndescriptor=1) # needs formatting
 
-    for row in resultset:
-        row["prod_root_id"] = row["prod_root_id"].strip()
+        for row in resultset:
+            row["manu_id"]      = str(row["manu_id"])
+            row["prod_root_id"] = row["prod_root_id"].strip()
 
-    #result = order_by_date(resultset)
+        #result = order_by_date(resultset)
+        return resultset
 
-    return resultset
+    except Exception as error:
+        message = 'Failed to get item: {}'.format(error)
+        return message
 
 def get_sup_data(date):
     sql = '''
